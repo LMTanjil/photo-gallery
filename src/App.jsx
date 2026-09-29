@@ -8,6 +8,7 @@ import { usePhotos } from "./hooks/usePhotos.js";
 function App() {
   const { photos, loading, error, retry } = usePhotos();
   const [searchQuery, setSearchQuery] = useState("");
+  const [albumId, setAlbumId] = useState("all");
   const [isDark, setIsDark] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const closeModal = useCallback(() => setSelectedPhoto(null), []);
@@ -50,7 +51,12 @@ function App() {
           onRetry={retry}
           onPhotoSelect={setSelectedPhoto}
           searchQuery={searchQuery}
-          onClearSearch={() => setSearchQuery("")}
+          albumId={albumId}
+          onAlbumChange={setAlbumId}
+          onClearFilters={() => {
+            setSearchQuery("");
+            setAlbumId("all");
+          }}
         />
       </main>
       <Footer />

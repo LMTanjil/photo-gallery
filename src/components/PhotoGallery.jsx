@@ -9,19 +9,25 @@ function PhotoGallery({
   onRetry,
   onPhotoSelect,
   searchQuery,
-  onClearSearch,
+  albumId,
+  onAlbumChange,
+  onClearFilters,
 }) {
   const filteredPhotos = useMemo(() => {
     const normalizedQuery = searchQuery.trim().toLowerCase();
 
-    if (!normalizedQuery) return photos;
-
     return photos.filter(
       (photo) =>
-        photo.title.toLowerCase().includes(normalizedQuery) ||
-        String(photo.id).includes(normalizedQuery),
+        (albumId === "all" || photo.albumId === Number(albumId)) &&
+        (!normalizedQuery ||
+          photo.title.toLowerCase().includes(normalizedQuery) ||
+          String(photo.id).includes(normalizedQuery)),
     );
-  }, [photos, searchQuery]);
+  }, [photos, searchQuery, albumId]);
+  const albumIds = useMemo(
+    () => [...new Set(photos.map((photo) => photo.albumId))].sort((a, b) => a - b),
+    [photos],
+  );
 
   if (loading) {
     return (
@@ -80,14 +86,14 @@ function PhotoGallery({
         <p className="text-sm text-slate-500 dark:text-slate-400">
           {photos.length === 0
             ? "The collection is empty right now. Please check back soon."
-            : "Try a different title or photo ID to find what you’re looking for."}
+            : "Try adjusting your search or album selection to find what you’re looking for."}
         </p>
         {photos.length > 0 && (
           <button
             type="button"
-            onClick={onClearSearch}
+            onClick={onClearFilters}
             className="mt-5 rounded-lg px-3 py-2 text-sm font-semibold text-violet-700 transition hover:bg-violet-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600 dark:text-violet-300 dark:hover:bg-violet-950">
-            Clear search
+            Clear filters
           </button>
         )}
       </div>
@@ -96,7 +102,7 @@ function PhotoGallery({
 
   return (
     <>
-      <div className="mb-5 flex items-center justify-between text-sm text-slate-500 dark:text-slate-400">
+      <div className="mb-5 flex flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
         <p aria-live="polite">
           Showing{" "}
           <span className="font-semibold text-slate-800 dark:text-slate-200">
@@ -104,6 +110,18 @@ function PhotoGallery({
           </span>{" "}
           of {photos.length} photos
         </p>
+        <label className="flex items-center gap-3 text-sm font-medium text-slate-600 dark:text-slate-300">
+          <span>Album</span>
+          <select
+            value={albumId}
+            onChange={(event) => onAlbumChange(event.target.value)}
+            className="min-w-36 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-800 outline-none transition focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
+            <option value="all">All albums</option>
+            {albumIds.map((id) => (
+              <option key={id} value={id}>Album {id}</option>
+            ))}
+          </select>
+        </label>
       </div>
       <section
         aria-label="Photo collection"
