@@ -1,60 +1,64 @@
+import { useCallback, useEffect, useState } from "react";
+import Footer from "./components/Footer.jsx";
+import Header from "./components/Header.jsx";
+import PhotoGallery from "./components/PhotoGallery.jsx";
+import PhotoModal from "./components/PhotoModal.jsx";
 import { usePhotos } from "./hooks/usePhotos.js";
 
 function App() {
   const { photos, loading, error, retry } = usePhotos();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isDark, setIsDark] = useState(false);
+  const [selectedPhoto, setSelectedPhoto] = useState(null);
+  const closeModal = useCallback(() => setSelectedPhoto(null), []);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", isDark);
+  }, [isDark]);
 
   return (
-    <main className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      <header className="mb-8">
-        <p className="text-sm font-semibold uppercase tracking-widest text-violet-600">
-          Photo Gallery
-        </p>
-        <h1 className="my-2 text-3xl font-bold">
-          A little inspiration, in every frame
-        </h1>
-        <p>Browse the first 100 photos from the collection.</p>
-      </header>
-
-      {loading && <p role="status">Loading photos…</p>}
-
-      {error && (
-        <div
-          role="alert"
-          className="rounded-xl border border-red-300 bg-red-50 p-6 text-red-900">
-          <p>{error}</p>
-          <button
-            type="button"
-            onClick={retry}
-            className="mt-4 rounded-lg bg-red-800 px-4 py-2 font-semibold text-white">
-            Try again
-          </button>
-        </div>
-      )}
-
-      {!loading && !error && (
+    <div
+      id="top"
+      className="flex min-h-screen flex-col bg-slate-50 text-slate-900 transition-colors dark:bg-slate-950 dark:text-slate-100">
+      <Header
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        isDark={isDark}
+        onToggleTheme={() => setIsDark((currentTheme) => !currentTheme)}
+      />
+      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
         <section
-          aria-label="Photo collection"
-          className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {photos.map((photo) => (
-            <article
-              key={photo.id}
-              className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-              <img
-                src={photo.thumbnailUrl}
-                alt={photo.title}
-                className="aspect-4/3 w-full object-cover"
-              />
-              <div className="p-4">
-                <p className="line-clamp-2 font-medium">{photo.title}</p>
-                <p className="mt-2 text-sm text-slate-500">
-                  Photo {photo.id} · Album {photo.albumId}
-                </p>
-              </div>
-            </article>
-          ))}
+          className="mb-9 max-w-2xl sm:mb-12"
+          aria-labelledby="gallery-heading">
+          <p className="mb-3 text-sm font-bold uppercase tracking-[0.18em] text-violet-700 dark:text-violet-300">
+            A collection of moments
+          </p>
+          <h1
+            id="gallery-heading"
+            className="mb-4 text-3xl font-bold tracking-tight text-slate-950 sm:text-5xl dark:text-white">
+            Find your next favorite frame.
+          </h1>
+          <p className="text-base leading-7 text-slate-600 sm:text-lg dark:text-slate-400">
+            A little inspiration, one photo at a time. Explore the first 100
+            snapshots from our community collection.
+          </p>
         </section>
+        <PhotoGallery
+          photos={photos}
+          loading={loading}
+          error={error}
+          onRetry={retry}
+          onPhotoSelect={setSelectedPhoto}
+        />
+      </main>
+      <Footer />
+      {selectedPhoto && (
+        <PhotoModal
+          photo={selectedPhoto}
+          onClose={closeModal}
+        />
       )}
-    </main>
+    </div>
   );
 }
 
