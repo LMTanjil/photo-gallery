@@ -25,7 +25,8 @@ function PhotoGallery({
     );
   }, [photos, searchQuery, albumId]);
   const albumIds = useMemo(
-    () => [...new Set(photos.map((photo) => photo.albumId))].sort((a, b) => a - b),
+    () =>
+      [...new Set(photos.map((photo) => photo.albumId))].sort((a, b) => a - b),
     [photos],
   );
 
@@ -34,7 +35,7 @@ function PhotoGallery({
       <section
         aria-label="Loading photos"
         aria-busy="true"
-        className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
         {Array.from({ length: 12 }, (_, index) => (
           <div
             key={index}
@@ -118,14 +119,16 @@ function PhotoGallery({
             className="min-w-36 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-800 outline-none transition focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
             <option value="all">All albums</option>
             {albumIds.map((id) => (
-              <option key={id} value={id}>Album {id}</option>
+              <option key={id} value={id}>
+                Album {id}
+              </option>
             ))}
           </select>
         </label>
       </div>
       <section
         aria-label="Photo collection"
-        className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
         {filteredPhotos.map((photo) => (
           <PhotoCard key={photo.id} photo={photo} onSelect={onPhotoSelect} />
         ))}

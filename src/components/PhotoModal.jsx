@@ -32,7 +32,7 @@ function PhotoModal({ photo, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 grid place-items-center bg-slate-950/75 p-3 backdrop-blur-sm sm:p-6"
+      className="gallery-modal-backdrop fixed inset-0 z-50 grid place-items-center bg-slate-950/75 p-3 backdrop-blur-sm sm:p-6"
       onClick={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}>
@@ -40,7 +40,7 @@ function PhotoModal({ photo, onClose }) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="photo-modal-title"
-        className="relative max-h-[94vh] w-full max-w-4xl overflow-auto rounded-2xl bg-white shadow-2xl dark:bg-slate-900">
+        className="gallery-modal-panel relative max-h-[94vh] w-full max-w-4xl overflow-auto rounded-2xl bg-white shadow-2xl dark:bg-slate-900">
         <button
           ref={closeButtonRef}
           type="button"
