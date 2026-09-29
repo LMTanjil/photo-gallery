@@ -1,7 +1,28 @@
+import { useMemo } from "react";
 import { FiAlertCircle, FiImage, FiRefreshCw } from "react-icons/fi";
 import PhotoCard from "./PhotoCard.jsx";
 
-function PhotoGallery({ photos, loading, error, onRetry, onPhotoSelect }) {
+function PhotoGallery({
+  photos,
+  loading,
+  error,
+  onRetry,
+  onPhotoSelect,
+  searchQuery,
+  onClearSearch,
+}) {
+  const filteredPhotos = useMemo(() => {
+    const normalizedQuery = searchQuery.trim().toLowerCase();
+
+    if (!normalizedQuery) return photos;
+
+    return photos.filter(
+      (photo) =>
+        photo.title.toLowerCase().includes(normalizedQuery) ||
+        String(photo.id).includes(normalizedQuery),
+    );
+  }, [photos, searchQuery]);
+
   if (loading) {
     return (
       <section
@@ -47,30 +68,51 @@ function PhotoGallery({ photos, loading, error, onRetry, onPhotoSelect }) {
     );
   }
 
-  if (photos.length === 0) {
+  if (filteredPhotos.length === 0) {
     return (
       <div className="mx-auto flex max-w-lg flex-col items-center py-20 text-center">
         <span className="mb-4 grid size-14 place-items-center rounded-2xl bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-300">
           <FiImage aria-hidden="true" size={26} />
         </span>
         <h2 className="mb-2 text-lg font-bold text-slate-900 dark:text-white">
-          No photos to show
+          {photos.length === 0 ? "No photos to show" : "No photos found"}
         </h2>
         <p className="text-sm text-slate-500 dark:text-slate-400">
-          The collection is empty right now. Please check back soon.
+          {photos.length === 0
+            ? "The collection is empty right now. Please check back soon."
+            : "Try a different title or photo ID to find what you’re looking for."}
         </p>
+        {photos.length > 0 && (
+          <button
+            type="button"
+            onClick={onClearSearch}
+            className="mt-5 rounded-lg px-3 py-2 text-sm font-semibold text-violet-700 transition hover:bg-violet-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600 dark:text-violet-300 dark:hover:bg-violet-950">
+            Clear search
+          </button>
+        )}
       </div>
     );
   }
 
   return (
-    <section
-      aria-label="Photo collection"
-      className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      {photos.map((photo) => (
-        <PhotoCard key={photo.id} photo={photo} onSelect={onPhotoSelect} />
-      ))}
-    </section>
+    <>
+      <div className="mb-5 flex items-center justify-between text-sm text-slate-500 dark:text-slate-400">
+        <p aria-live="polite">
+          Showing{" "}
+          <span className="font-semibold text-slate-800 dark:text-slate-200">
+            {filteredPhotos.length}
+          </span>{" "}
+          of {photos.length} photos
+        </p>
+      </div>
+      <section
+        aria-label="Photo collection"
+        className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {filteredPhotos.map((photo) => (
+          <PhotoCard key={photo.id} photo={photo} onSelect={onPhotoSelect} />
+        ))}
+      </section>
+    </>
   );
 }
 

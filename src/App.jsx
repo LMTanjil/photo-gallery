@@ -49,14 +49,13 @@ function App() {
           error={error}
           onRetry={retry}
           onPhotoSelect={setSelectedPhoto}
+          searchQuery={searchQuery}
+          onClearSearch={() => setSearchQuery("")}
         />
       </main>
       <Footer />
       {selectedPhoto && (
-        <PhotoModal
-          photo={selectedPhoto}
-          onClose={closeModal}
-        />
+        <PhotoModal photo={selectedPhoto} onClose={closeModal} />
       )}
     </div>
   );
