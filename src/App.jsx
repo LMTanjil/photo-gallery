@@ -5,16 +5,37 @@ import PhotoGallery from "./components/PhotoGallery.jsx";
 import PhotoModal from "./components/PhotoModal.jsx";
 import { usePhotos } from "./hooks/usePhotos.js";
 
+function getInitialTheme() {
+  try {
+    const savedTheme = window.localStorage.getItem("photo-gallery-theme");
+    if (savedTheme === "dark" || savedTheme === "light") {
+      return savedTheme === "dark";
+    }
+  } catch {
+    // Storage may be unavailable; use the system preference instead.
+  }
+
+  return window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false;
+}
+
 function App() {
   const { photos, loading, error, retry } = usePhotos();
   const [searchQuery, setSearchQuery] = useState("");
   const [albumId, setAlbumId] = useState("all");
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(getInitialTheme);
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const closeModal = useCallback(() => setSelectedPhoto(null), []);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", isDark);
+    try {
+      window.localStorage.setItem(
+        "photo-gallery-theme",
+        isDark ? "dark" : "light",
+      );
+    } catch {
+      // Keep the theme usable even if the browser blocks persistent storage.
+    }
   }, [isDark]);
 
   return (
