@@ -34,6 +34,7 @@ function Header({ searchQuery, onSearchChange, isDark, onToggleTheme }) {
           type="button"
           onClick={onToggleTheme}
           aria-label={`Switch to ${isDark ? "light" : "dark"} theme`}
+          aria-pressed={isDark}
           className="ml-auto grid size-10 shrink-0 place-items-center rounded-xl border border-slate-200 text-slate-600 transition hover:border-violet-300 hover:text-violet-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600 dark:border-slate-700 dark:text-slate-300 dark:hover:border-violet-500 dark:hover:text-violet-300">
           {isDark ? (
             <FiSun aria-hidden="true" />

@@ -42,13 +42,21 @@ function App() {
     <div
       id="top"
       className="flex min-h-screen flex-col bg-slate-50 text-slate-900 transition-colors dark:bg-slate-950 dark:text-slate-100">
+      <a
+        href="#main-content"
+        className="sr-only focus:fixed focus:left-4 focus:top-4 focus:z-60 focus:not-sr-only focus:rounded-lg focus:bg-white focus:px-4 focus:py-3 focus:text-sm focus:font-semibold focus:text-slate-900 focus:shadow-xl focus:outline-2 focus:outline-violet-600">
+        Skip to gallery content
+      </a>
       <Header
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         isDark={isDark}
         onToggleTheme={() => setIsDark((currentTheme) => !currentTheme)}
       />
-      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 outline-none sm:px-6 sm:py-14 lg:px-8">
         <section
           className="mb-9 max-w-2xl sm:mb-12"
           aria-labelledby="gallery-heading">
